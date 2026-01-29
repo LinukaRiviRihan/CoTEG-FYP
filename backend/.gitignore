@@ -215,6 +215,5 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-db.sqlite3
-dl_models/
-*.pth
+# SQLite database files
+*.sqlite3

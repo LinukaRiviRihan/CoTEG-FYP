@@ -126,7 +126,7 @@ export default function ModelPanel({
           </h3>
           <button
             onClick={() => setShowAllScores(!showAllScores)}
-            className="text-xs font-medium text-gray-500 hover:text-gray-800 underline decoration-dotted">
+            className="text-xs font-medium text-gray-500 hover:text-gray-800 underline">
             {showAllScores ? 'Hide details' : 'Show all'}
           </button>
         </div>
