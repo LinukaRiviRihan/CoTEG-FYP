@@ -105,11 +105,13 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = 'static/'
+STATIC_URL = '/assets/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Include React assets
-STATICFILES_DIRS = [FRONTEND_DIR / 'assets'] if (FRONTEND_DIR / 'assets').exists() else []
+STATICFILES_DIRS = []
+if (FRONTEND_DIR / 'assets').exists():
+    STATICFILES_DIRS = [FRONTEND_DIR / 'assets']
 
 # Optimized storage for static files
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
