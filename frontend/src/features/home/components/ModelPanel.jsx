@@ -2,34 +2,11 @@ import { useState } from 'react';
 import MetricRow from './MetricRow';
 
 const GO_EMOTIONS = [
-  'admiration',
-  'amusement',
-  'anger',
-  'annoyance',
-  'approval',
-  'caring',
-  'confusion',
-  'curiosity',
-  'desire',
-  'disappointment',
-  'disapproval',
-  'disgust',
-  'embarrassment',
-  'excitement',
-  'fear',
-  'gratitude',
-  'grief',
-  'joy',
-  'love',
-  'nervousness',
-  'optimism',
-  'pride',
-  'realization',
-  'relief',
-  'remorse',
-  'sadness',
-  'surprise',
-  'neutral',
+  'admiration', 'amusement', 'anger', 'annoyance', 'approval', 'caring',
+  'confusion', 'curiosity', 'desire', 'disappointment', 'disapproval',
+  'disgust', 'embarrassment', 'excitement', 'fear', 'gratitude', 'grief',
+  'joy', 'love', 'nervousness', 'optimism', 'pride', 'realization',
+  'relief', 'remorse', 'sadness', 'surprise', 'neutral',
 ];
 
 export default function ModelPanel({
@@ -39,7 +16,6 @@ export default function ModelPanel({
   isHighlight = false,
 }) {
   const [showAllScores, setShowAllScores] = useState(false);
-
   const { predicted, scores, metrics, thresholds = {} } = data;
 
   const theme = {
@@ -60,16 +36,18 @@ export default function ModelPanel({
   }[colorTheme];
 
   const containerStyle = isHighlight
-    ? `ring-2 ${theme.ring} shadow-lg scale-[1.01]`
+    ? `ring-2 ${theme.ring} shadow-lg lg:scale-[1.01]`
     : 'border border-gray-200 shadow-sm';
 
   return (
     <div
-      className={`bg-white rounded-2xl p-6 transition-all duration-300 ${containerStyle}`}>
+      className={`bg-white rounded-2xl p-4 md:p-6 transition-all duration-300 ${containerStyle}`}>
+
       {/* --- HEADER --- */}
-      <div className="flex justify-between items-start mb-6 border-b border-gray-100 pb-4">
+      {/* Mobile: Stack vertically. Desktop: Row with space-between */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-6 border-b border-gray-100 pb-4 gap-4 sm:gap-0">
         <div className="flex flex-col">
-          <h2 className="text-xl font-bold text-gray-800">{modelName}</h2>
+          <h2 className="text-lg md:text-xl font-bold text-gray-800">{modelName}</h2>
           {isHighlight && (
             <span className="mt-1 w-fit text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded">
               Recommended
@@ -77,9 +55,9 @@ export default function ModelPanel({
           )}
         </div>
 
-        {/* --- 2. DYNAMIC METRICS GRID --- */}
+        {/* --- DYNAMIC METRICS GRID --- */}
         {metrics && Object.keys(metrics).length > 0 ? (
-          <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-right">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-1 w-full sm:w-auto">
             <MetricRow
               label="Macro F1"
               value={metrics.macro_f1}
@@ -106,7 +84,7 @@ export default function ModelPanel({
             predicted.map((e) => (
               <span
                 key={e}
-                className={`px-3 py-1.5 rounded-lg text-sm font-bold capitalize shadow-sm ${theme.bg} ${theme.text} border ${theme.border}`}>
+                className={`px-3 py-1.5 rounded-lg text-xs md:text-sm font-bold capitalize shadow-sm ${theme.bg} ${theme.text} border ${theme.border}`}>
                 {e}
               </span>
             ))
@@ -126,7 +104,7 @@ export default function ModelPanel({
           </h3>
           <button
             onClick={() => setShowAllScores(!showAllScores)}
-            className="text-xs font-medium text-gray-500 hover:text-gray-800 underline">
+            className="text-xs font-medium text-gray-500 hover:text-gray-800 underline p-2 -mr-2">
             {showAllScores ? 'Hide details' : 'Show all'}
           </button>
         </div>
