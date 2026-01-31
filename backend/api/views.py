@@ -69,8 +69,10 @@ def predict_emotions(request):
             # 1. Get Config
             api_config = apps.get_app_config('api')
 
+            api_config.load_models()
+
             if not api_config.coteg_model:
-                return JsonResponse({"error": "Models loading..."}, status=503)
+                return JsonResponse({"error": "Models failed to load..."}, status=503)
 
             data = json.loads(request.body)
             text = data.get("text", "")
