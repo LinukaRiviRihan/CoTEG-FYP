@@ -1,11 +1,13 @@
 import os
 import sys
 import torch
+import gc
 from django.apps import AppConfig
 from django.conf import settings
 from transformers import AutoTokenizer
 from .dl_models import CoTEGModel, BaselineModel
 from transformers import logging as hf_logging
+
 
 class ApiConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
@@ -22,7 +24,7 @@ class ApiConfig(AppConfig):
     base_metrics = None
 
     def ready(self):
-        # 1. STARTUP: We do NOTHING here anymore.
+        # 1. STARTUP: Do NOTHING here.
         # This allows Render to start the server immediately without crashing.
         print("System Ready. Models will load on first request.")
         pass
@@ -32,12 +34,13 @@ class ApiConfig(AppConfig):
         if self.coteg_model is not None:
             return
 
-        print("Trigger received: Loading DL Models now...")
+        print("Trigger received: Loading DL Models...")
         hf_logging.set_verbosity_error()
 
-        try:
-            device = torch.device("cpu")
+        # Force CPU device for consistency and memory saving on Render
+        device = torch.device("cpu")
 
+        try:
             # 3. PATH SETUP
             model_dir = os.path.join(settings.BASE_DIR, 'dl_models')
             coteg_path = os.path.join(model_dir, 'coteg_model.pth')
@@ -45,16 +48,17 @@ class ApiConfig(AppConfig):
 
             if not os.path.exists(coteg_path):
                 print(f"ERROR: Model not found at {coteg_path}")
-                print(f"   BASE_DIR is: {settings.BASE_DIR}")
                 return
 
             print(f"Found models at: {model_dir}")
 
-            # 4. LOAD CHECKPOINTS (CPU Only)
+            # ---------------------------------------------------------
+            # PHASE 1: Load CoTEG (The heavy lifter)
+            # ---------------------------------------------------------
+            print("1/4 Loading CoTEG Checkpoint...")
             coteg_ckpt = torch.load(coteg_path, map_location=device, weights_only=False)
-            base_ckpt = torch.load(base_path, map_location=device, weights_only=False)
 
-            # 5. LABELS
+            # Setup Global Configs from CoTEG
             GO_EMOTIONS = ['admiration', 'amusement', 'anger', 'annoyance', 'approval', 'caring', 'confusion',
                            'curiosity', 'desire', 'disappointment', 'disapproval', 'disgust', 'embarrassment',
                            'excitement', 'fear', 'gratitude', 'grief', 'joy', 'love', 'nervousness', 'optimism',
@@ -62,32 +66,66 @@ class ApiConfig(AppConfig):
             self.labels = coteg_ckpt.get('labels', GO_EMOTIONS)
             num_labels = len(self.labels)
 
-            # 6. THRESHOLDS
             default_thr = [0.3] * num_labels
             self.coteg_thresholds = coteg_ckpt.get('thr', default_thr)
             self.coteg_metrics = coteg_ckpt.get('metrics', {})
+
+            # Initialize CoTEG Model
+            print("Constructing CoTEG Model...")
+            initial_adj = torch.eye(num_labels).to(device)
+            self.coteg_model = CoTEGModel(num_labels, initial_adj).to(device)
+
+            # Load Weights
+            coteg_state = coteg_ckpt.get('state', coteg_ckpt.get('state_dict'))
+            self.coteg_model.load_state_dict(coteg_state, strict=False)
+            self.coteg_model.eval()
+
+            # CRITICAL: Delete the raw checkpoint to free RAM immediately
+            del coteg_ckpt
+            del coteg_state
+            gc.collect()
+
+            # OPTIMIZATION: Quantize CoTEG (Shrinks memory by ~4x)
+            print("Quantizing CoTEG...")
+            self.coteg_model = torch.quantization.quantize_dynamic(
+                self.coteg_model, {torch.nn.Linear}, dtype=torch.qint8
+            )
+            gc.collect()
+
+            # ---------------------------------------------------------
+            # PHASE 2: Load Baseline
+            # ---------------------------------------------------------
+            print("2/4 Loading Baseline Checkpoint...")
+            base_ckpt = torch.load(base_path, map_location=device, weights_only=False)
+
             self.base_thresholds = base_ckpt.get('thr', default_thr)
             self.base_metrics = base_ckpt.get('metrics', {})
 
-            # 7. TOKENIZER
-            self.tokenizer = AutoTokenizer.from_pretrained("roberta-base")
-
-            # 8. BASELINE MODEL
-            print("Constructing Baseline...")
+            print("Constructing Baseline Model...")
             self.baseline_model = BaselineModel(num_labels).to(device)
             base_state = base_ckpt.get('state', base_ckpt.get('state_dict'))
             self.baseline_model.load_state_dict(base_state, strict=False)
             self.baseline_model.eval()
 
-            # 9. CoTEG MODEL
-            print("Constructing CoTEG...")
-            initial_adj = torch.eye(num_labels).to(device)
-            self.coteg_model = CoTEGModel(num_labels, initial_adj).to(device)
-            coteg_state = coteg_ckpt.get('state', coteg_ckpt.get('state_dict'))
-            self.coteg_model.load_state_dict(coteg_state, strict=False)
-            self.coteg_model.eval()
+            # Clean up Baseline inputs
+            del base_ckpt
+            del base_state
+            gc.collect()
 
-            print("SUCCESS: All models loaded!")
+            # OPTIMIZATION: Quantize Baseline
+            print("Quantizing Baseline...")
+            self.baseline_model = torch.quantization.quantize_dynamic(
+                self.baseline_model, {torch.nn.Linear}, dtype=torch.qint8
+            )
+            gc.collect()
+
+            # ---------------------------------------------------------
+            # PHASE 3: Tokenizer
+            # ---------------------------------------------------------
+            print("3/4 Loading Tokenizer...")
+            self.tokenizer = AutoTokenizer.from_pretrained("roberta-base")
+
+            print("SUCCESS: All models loaded, quantized, and ready!")
 
         except Exception as e:
             print(f"CRITICAL ERROR initializing models: {e}")
