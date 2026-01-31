@@ -217,3 +217,5 @@ __marimo__/
 
 # SQLite database files
 *.sqlite3
+dl_models/
+*.pth
