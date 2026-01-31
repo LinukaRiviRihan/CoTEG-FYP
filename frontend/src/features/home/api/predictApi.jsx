@@ -9,11 +9,9 @@ export const predictApi = async (
   if (!text.trim()) return;
   setLoading(true);
   try {
-    // const response = await axios.post('http://127.0.0.1:8000/api/predict/', {
-    //   text: text,
-    // });
+    // const response = await axios.post('http://127.0.0.1:8000/api/predict/', { text: text });
 
-    const response = await axios.post('/api/predict/', { text: text });
+    const response = await axios.post('https://linukarivirihan-backend.hf.space/api/predict/', { text: text });
 
     setBaselineData(response.data.baseline);
     setCotegData(response.data.coteg);
