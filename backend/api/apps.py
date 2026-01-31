@@ -75,7 +75,7 @@ class ApiConfig(AppConfig):
             self.tokenizer = AutoTokenizer.from_pretrained("roberta-base")
 
             # 3. Models
-            print("⏳ Constructing Baseline (Downloading base weights if needed)...")
+            print("⏳ Constructing Baseline...")
             self.baseline_model = BaselineModel(num_labels).to(device)
             base_state = base_ckpt.get('state', base_ckpt.get('state_dict'))
             self.baseline_model.load_state_dict(base_state, strict=False)
