@@ -53,7 +53,7 @@ export default function Home() {
           </button>
         </div>
 
-        {/* Results Grid - Stacks on mobile (grid-cols-1), side-by-side on desktop */}
+        {/* Results Grid */}
         {baselineData && cotegData && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 items-start">
             <ModelPanel

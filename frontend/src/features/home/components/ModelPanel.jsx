@@ -44,7 +44,6 @@ export default function ModelPanel({
       className={`bg-white rounded-2xl p-4 md:p-6 transition-all duration-300 ${containerStyle}`}>
 
       {/* --- HEADER --- */}
-      {/* Mobile: Stack vertically. Desktop: Row with space-between */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-6 border-b border-gray-100 pb-4 gap-4 sm:gap-0">
         <div className="flex flex-col">
           <h2 className="text-lg md:text-xl font-bold text-gray-800">{modelName}</h2>
