@@ -1,29 +1,14 @@
 import os
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-# On Hugging Face, you can set this in "Settings" -> "Variables and secrets",
-# otherwise it defaults to the dev key below.
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dev-key-change-this')
 
-# SECURITY: Handle Debug Mode
-# We assume production (False) unless explicitly told otherwise.
-# You can set DEBUG=True in Hugging Face secrets if you need to troubleshoot.
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-# SECURITY: Allowed Hosts
-# Hugging Face generates dynamic URLs, so we allow '*' to prevent 400 Bad Request errors.
 ALLOWED_HOSTS = ['*']
 
-# CSRF_TRUSTED_ORIGINS
-# CRITICAL: Hugging Face runs your app behind a proxy.
-# Without this, you will get "CSRF Verification Failed" errors.
 CSRF_TRUSTED_ORIGINS = [
     'https://*.hf.space',
     'https://*.huggingface.co',
