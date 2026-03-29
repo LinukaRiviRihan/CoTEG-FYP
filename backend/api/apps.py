@@ -4,7 +4,6 @@ import torch
 from django.apps import AppConfig
 from django.conf import settings
 from transformers import AutoTokenizer
-# Ensure this import works based on your file structure
 from .dl_models import CoTEGModel, BaselineModel
 from transformers import logging as hf_logging
 
@@ -24,12 +23,9 @@ class ApiConfig(AppConfig):
     base_metrics = None
 
     def ready(self):
-        # 1. [CHANGED] Only skip if we are running a migration or build script.
-        # This allows Gunicorn to proceed.
         if 'migrate' in sys.argv or 'collectstatic' in sys.argv:
             return
 
-        # Avoid double loading if already loaded
         if self.coteg_model is not None:
             return
 
@@ -71,7 +67,6 @@ class ApiConfig(AppConfig):
             self.base_metrics = base_ckpt.get('metrics', {})
 
             # 2. Tokenizer
-            # This will download 'roberta-base' the first time it runs
             self.tokenizer = AutoTokenizer.from_pretrained("roberta-base")
 
             # 3. Models
