@@ -8,9 +8,7 @@ export default function Navbar() {
         {/* Brand & Titles */}
         <div className="text-center md:text-left flex flex-col justify-center">
           <h1 className="text-xl md:text-2xl font-bold tracking-wide text-white flex items-center justify-center md:justify-start gap-2">
-            <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
+
             CoTEG
           </h1>
           <h2 className="mt-1.5 text-xs md:text-sm text-zinc-400 italic max-w-md md:max-w-xl leading-relaxed">

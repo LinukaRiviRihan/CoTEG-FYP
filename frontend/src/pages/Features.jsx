@@ -39,7 +39,7 @@ export default function Features() {
 
   return (
     <div className="min-h-screen px-4 py-12 md:px-6 bg-white font-sans">
-      <div className="max-w-7xl mx-auto space-y-12">
+      <div className="max-w-7xl mx-auto space-y-8">
 
         <header className="text-center space-y-4 max-w-2xl mx-auto">
           <h2 className="text-blue-600 font-semibold tracking-wide uppercase text-sm">Capabilities</h2>
