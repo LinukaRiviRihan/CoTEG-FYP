@@ -8,7 +8,6 @@ export default function Navbar() {
         {/* Brand & Titles */}
         <div className="text-center md:text-left flex flex-col justify-center">
           <h1 className="text-xl md:text-2xl font-bold tracking-wide text-white flex items-center justify-center md:justify-start gap-2">
-
             CoTEG
           </h1>
           <h2 className="mt-1.5 text-xs md:text-sm text-zinc-400 italic max-w-md md:max-w-xl leading-relaxed">
