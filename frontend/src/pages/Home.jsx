@@ -65,7 +65,7 @@ export default function Home() {
     <main className="min-h-screen px-4 py-6 md:px-6 md:py-8 font-sans text-gray-900">
       <section className="max-w-7xl mx-auto space-y-6 md:space-y-8">
 
-        <header className="text-center space-y-4">
+        <header className="text-center space-y-6">
           <h1 className="text-xl md:text-2xl font-bold tracking-tight px-2">
             Enter or select a complex emotion-laden sentence
           </h1>
