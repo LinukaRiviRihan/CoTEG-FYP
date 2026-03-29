@@ -98,8 +98,8 @@ venv\Scripts\activate
 source venv/bin/activate
 
 pip install -r requirements.txt
-python manage.py migrate
-python manage.py runserver
+python manage.py migrate / py manage.py migrate
+python manage.py runserver / py manage.py runserver
 ```
 
 The backend API will be available at:
