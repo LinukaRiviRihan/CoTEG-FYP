@@ -82,7 +82,7 @@ export default function Home() {
                 className="w-full flex items-center justify-between text-left text-sm md:text-base text-gray-600 bg-white border border-gray-300 rounded-lg p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer">
                 <span className="truncate pr-4">{currentSelectionLabel}</span>
                 <svg
-                  className={`w-4 h-4 text-gray-500 flex-shrink-0 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
+                  className={`w-4 h-4 text-gray-500 shrink-0 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24">
